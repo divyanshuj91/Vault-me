@@ -129,12 +129,12 @@ export default function Audit() {
 
   const activeList = getActiveList();
 
-  // Tab config
+  // Tab config - grayscale indicators
   const tabConfig = [
-    { id: 'breached', label: 'Breached', count: breachedCredentials.length, color: 'text-red-400', icon: <ShieldAlert className="h-4 w-4" /> },
-    { id: 'weak', label: 'Weak', count: weakCredentials.length, color: 'text-orange-400', icon: <AlertTriangle className="h-4 w-4" /> },
-    { id: 'reused', label: 'Reused', count: reusedCredentials.length, color: 'text-amber-400', icon: <RefreshCw className="h-3.5 w-3.5" /> },
-    { id: 'old', label: 'Old (90d+)', count: oldCredentials.length, color: 'text-slate-400', icon: <Clock className="h-4 w-4" /> },
+    { id: 'breached', label: 'Breached', count: breachedCredentials.length, icon: <ShieldAlert className="h-4 w-4" /> },
+    { id: 'weak', label: 'Weak', count: weakCredentials.length, icon: <AlertTriangle className="h-4 w-4" /> },
+    { id: 'reused', label: 'Reused', count: reusedCredentials.length, icon: <RefreshCw className="h-3.5 w-3.5" /> },
+    { id: 'old', label: 'Old (90d+)', count: oldCredentials.length, icon: <Clock className="h-4 w-4" /> },
   ];
 
   return (
@@ -143,8 +143,8 @@ export default function Audit() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-text-primary">Security Audit Report</h1>
-          <p className="text-sm text-text-secondary mt-1">
+          <h1 className="text-2xl font-bold text-white">Security Audit Report</h1>
+          <p className="text-sm text-[#8e9192] mt-1">
             Identify compromised, weak, or repeated credentials across your vault.
           </p>
         </div>
@@ -154,10 +154,10 @@ export default function Audit() {
           <button
             onClick={handleFixAllWeak}
             disabled={isFixing}
-            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-accent-purple to-accent-cyan text-white text-sm font-bold shadow-lg shadow-accent-purple/20 hover:shadow-accent-purple/40 hover:scale-[1.02] transition-all cursor-pointer flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-primary flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isFixing ? <Loader2 className="h-4.5 w-4.5 animate-spin" /> : <Sparkles className="h-4.5 w-4.5" />}
-            Fix All Weak Passwords
+            {isFixing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+            FIX ALL WEAK
           </button>
         )}
       </div>
@@ -166,37 +166,37 @@ export default function Audit() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         
         {/* Score box */}
-        <div className="glass-card p-6 bg-card-bg/40 border-border-custom/50 shadow-md flex items-center gap-6 md:col-span-1">
-          <div className="h-20 w-20 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center font-black text-2xl text-accent-cyan">
+        <div className="glass-card p-6 flex items-center gap-6 md:col-span-1">
+          <div className="h-20 w-20 border border-[#444748] bg-[#131313] flex items-center justify-center font-black text-2xl text-white font-mono flex-shrink-0">
             {securityScore}%
           </div>
           <div>
-            <span className="text-xs text-text-secondary font-semibold">Vault Security Score</span>
-            <h3 className="text-lg font-bold text-text-primary mt-1">
+            <span className="label-caps">Vault Security Score</span>
+            <h3 className="text-base font-bold text-white mt-1">
               {securityScore >= 90 ? 'Excellent Rating' : securityScore >= 70 ? 'Moderate Risks' : 'Severe Risks!'}
             </h3>
           </div>
         </div>
 
         {/* Breakdown box */}
-        <div className="glass-card p-6 bg-card-bg/40 border-border-custom/50 shadow-md md:col-span-2 flex items-center justify-around flex-wrap gap-4 text-center">
+        <div className="glass-card p-6 md:col-span-2 flex items-center justify-around flex-wrap gap-4 text-center">
           <div>
-            <span className="text-xs text-text-secondary font-semibold">Breached</span>
-            <h3 className={`text-2xl font-black mt-1 ${breachedCredentials.length > 0 ? 'text-red-400' : 'text-text-primary'}`}>
+            <span className="label-caps">Breached</span>
+            <h3 className={`text-2xl font-black mt-1 ${breachedCredentials.length > 0 ? 'text-white' : 'text-[#8e9192]'}`}>
               {breachedCredentials.length}
             </h3>
           </div>
-          <div className="h-8 w-px bg-border-custom" />
+          <div className="h-8 w-px bg-[#444748]" />
           <div>
-            <span className="text-xs text-text-secondary font-semibold">Weak</span>
-            <h3 className={`text-2xl font-black mt-1 ${weakCredentials.length > 0 ? 'text-orange-400' : 'text-text-primary'}`}>
+            <span className="label-caps">Weak</span>
+            <h3 className={`text-2xl font-black mt-1 ${weakCredentials.length > 0 ? 'text-white' : 'text-[#8e9192]'}`}>
               {weakCredentials.length}
             </h3>
           </div>
-          <div className="h-8 w-px bg-border-custom" />
+          <div className="h-8 w-px bg-[#444748]" />
           <div>
-            <span className="text-xs text-text-secondary font-semibold">Reused</span>
-            <h3 className={`text-2xl font-black mt-1 ${reusedCredentials.length > 0 ? 'text-amber-400' : 'text-text-primary'}`}>
+            <span className="label-caps">Reused</span>
+            <h3 className={`text-2xl font-black mt-1 ${reusedCredentials.length > 0 ? 'text-white' : 'text-[#8e9192]'}`}>
               {reusedCredentials.length}
             </h3>
           </div>
@@ -205,23 +205,23 @@ export default function Audit() {
       </div>
 
       {/* Main Tabs Layout */}
-      <div className="glass-card bg-card-bg/40 border-border-custom/50 shadow-md overflow-hidden">
+      <div className="glass-card overflow-hidden">
         
         {/* Tab Buttons bar */}
-        <div className="flex border-b border-border-custom bg-primary-bg/20 overflow-x-auto scrollbar-none">
+        <div className="flex border-b border-[#444748] overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
           {tabConfig.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`px-5 py-4 text-xs font-bold transition-all border-b-2 flex items-center gap-2 cursor-pointer flex-shrink-0 ${
                 activeTab === tab.id
-                  ? 'border-accent-purple bg-accent-purple/5 text-text-primary'
-                  : 'border-transparent text-text-secondary hover:text-text-primary hover:bg-white/5'
+                  ? 'border-white text-white bg-[#201f1f]/50'
+                  : 'border-transparent text-[#8e9192] hover:text-white hover:bg-white/5'
               }`}
             >
               {tab.icon}
               <span>{tab.label}</span>
-              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-900 border border-slate-800 ${tab.count > 0 ? tab.color : 'text-text-muted'}`}>
+              <span className={`px-2 py-0.5 text-[10px] font-bold border border-[#444748] ${tab.count > 0 ? 'text-white' : 'text-[#8e9192]'}`}>
                 {tab.count}
               </span>
             </button>
@@ -232,12 +232,12 @@ export default function Audit() {
         <div className="p-6">
           {activeList.length === 0 ? (
             <div className="text-center py-12 space-y-3">
-              <div className="h-12 w-12 rounded-full bg-slate-900/60 border border-slate-800 flex items-center justify-center mx-auto text-green-400">
-                <ShieldCheck className="h-6 w-6" />
+              <div className="h-12 w-12 border border-[#444748] bg-[#131313] flex items-center justify-center mx-auto">
+                <ShieldCheck className="h-6 w-6 text-[#8e9192]" />
               </div>
               <div>
-                <h4 className="font-bold text-sm text-text-primary">No vulnerabilities detected</h4>
-                <p className="text-xs text-text-secondary mt-1">
+                <h4 className="font-bold text-sm text-white">No vulnerabilities detected</h4>
+                <p className="text-xs text-[#8e9192] mt-1">
                   Everything looks clean and secure in this category.
                 </p>
               </div>
@@ -246,52 +246,47 @@ export default function Audit() {
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-border-custom text-text-muted font-bold uppercase tracking-wider">
-                    <th className="pb-3 font-semibold">Site / Account</th>
-                    <th className="pb-3 font-semibold">Username</th>
-                    <th className="pb-3 font-semibold">Vulnerability Detail</th>
-                    <th className="pb-3 text-right font-semibold">Actions</th>
+                  <tr className="border-b border-[#444748]">
+                    <th className="pb-3 label-caps">Site / Account</th>
+                    <th className="pb-3 label-caps">Username</th>
+                    <th className="pb-3 label-caps">Vulnerability Detail</th>
+                    <th className="pb-3 text-right label-caps">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-border-custom/50">
+                <tbody className="divide-y divide-[#444748]/30">
                   {activeList.map((item) => {
                     let detailText = '';
-                    let detailColor = '';
                     
                     if (activeTab === 'breached') {
                       detailText = 'Exposed in public breaches!';
-                      detailColor = 'text-red-400 font-semibold';
                     } else if (activeTab === 'weak') {
                       detailText = 'Length / Complexity too low';
-                      detailColor = 'text-orange-400';
                     } else if (activeTab === 'reused') {
                       detailText = 'Used across multiple sites';
-                      detailColor = 'text-amber-400';
                     } else if (activeTab === 'old') {
                       const days = Math.round((new Date() - new Date(item.lastChangedAt)) / (1000 * 60 * 60 * 24));
                       detailText = `Last changed ${days} days ago`;
-                      detailColor = 'text-text-muted';
                     }
 
                     return (
-                      <tr key={item.id} className="hover:bg-white/5 transition-colors group">
+                      <tr key={item.id} className="hover:bg-white/3 transition-colors">
                         {/* Site */}
-                        <td className="py-4.5 font-bold text-text-primary text-sm max-w-[180px] truncate pr-4">
+                        <td className="py-4 font-bold text-white text-sm max-w-[180px] truncate pr-4">
                           {item.siteName}
                         </td>
                         {/* Username */}
-                        <td className="py-4.5 text-text-secondary max-w-[180px] truncate pr-4">
+                        <td className="py-4 text-[#8e9192] max-w-[180px] truncate pr-4 font-mono-data">
                           {item.username}
                         </td>
-                        {/* vulnerability detail */}
-                        <td className={`py-4.5 ${detailColor} pr-4`}>
+                        {/* Vulnerability detail */}
+                        <td className="py-4 text-[#c4c7c8] pr-4">
                           {detailText}
                         </td>
                         {/* Actions */}
-                        <td className="py-4.5 text-right">
+                        <td className="py-4 text-right">
                           <button
                             onClick={() => handleEdit(item)}
-                            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-border-custom bg-transparent text-text-secondary hover:text-text-primary hover:border-accent-purple hover:bg-accent-purple/5 transition-all cursor-pointer font-bold"
+                            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 border border-[#444748] bg-transparent text-[#8e9192] hover:text-white hover:border-white transition-all cursor-pointer font-bold text-xs"
                           >
                             <Edit2 className="h-3.5 w-3.5" /> Edit
                           </button>

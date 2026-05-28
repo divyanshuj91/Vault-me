@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { CheckCircle, XCircle, AlertTriangle, Info, X } from 'lucide-react';
+import { X } from 'lucide-react';
 
 const ToastContext = createContext(null);
 
@@ -29,44 +29,42 @@ export function ToastProvider({ children }) {
       <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3 max-w-sm w-full pointer-events-none">
         <AnimatePresence>
           {toasts.map((toast) => {
-            let config = {
-              bg: 'bg-slate-900/90 border-slate-800 text-slate-100 shadow-slate-950/50',
-              icon: <Info className="h-5 w-5 text-cyan-400" />
-            };
+            // Determine left border color based on type - thin colored border only
+            let leftBorderColor = 'border-[#444748]';
+            let leftAccentColor = '';
 
             if (toast.type === 'success') {
-              config = {
-                bg: 'bg-green-950/90 border-green-900/60 text-green-100 shadow-green-950/50',
-                icon: <CheckCircle className="h-5 w-5 text-green-400" />
-              };
+              leftAccentColor = 'border-l-[#22c55e]';
             } else if (toast.type === 'error') {
-              config = {
-                bg: 'bg-red-950/90 border-red-900/60 text-red-100 shadow-red-950/50',
-                icon: <XCircle className="h-5 w-5 text-red-400" />
-              };
+              leftAccentColor = 'border-l-[#ef4444]';
             } else if (toast.type === 'warning') {
-              config = {
-                bg: 'bg-amber-950/90 border-amber-900/60 text-amber-100 shadow-amber-950/50',
-                icon: <AlertTriangle className="h-5 w-5 text-amber-400" />
-              };
+              leftAccentColor = 'border-l-[#eab308]';
+            } else {
+              leftAccentColor = 'border-l-[#8e9192]';
             }
+
+            // Simple geometric dot indicator
+            let dotColor = 'bg-[#8e9192]';
+            if (toast.type === 'success') dotColor = 'bg-[#22c55e]';
+            else if (toast.type === 'error') dotColor = 'bg-[#ef4444]';
+            else if (toast.type === 'warning') dotColor = 'bg-[#eab308]';
 
             return (
               <motion.div
                 key={toast.id}
-                initial={{ opacity: 0, y: 30, scale: 0.9 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.85, transition: { duration: 0.15 } }}
-                className={`pointer-events-auto flex items-center justify-between gap-3 p-4 rounded-xl border backdrop-blur-md shadow-lg ${config.bg}`}
+                initial={{ opacity: 0, y: 20, x: 20 }}
+                animate={{ opacity: 1, y: 0, x: 0 }}
+                exit={{ opacity: 0, x: 20, transition: { duration: 0.15 } }}
+                className={`pointer-events-auto flex items-center justify-between gap-3 px-4 py-3 bg-[#1c1b1b] border ${leftBorderColor} border-l-4 ${leftAccentColor} backdrop-blur-md shadow-lg`}
               >
                 <div className="flex items-center gap-3">
-                  {config.icon}
-                  <p className="text-sm font-medium">{toast.message}</p>
+                  <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${dotColor}`} />
+                  <p className="text-sm font-medium text-white">{toast.message}</p>
                 </div>
                 
                 <button
                   onClick={() => removeToast(toast.id)}
-                  className="text-text-muted hover:text-text-primary p-0.5 rounded-lg hover:bg-white/5 transition-colors"
+                  className="text-[#8e9192] hover:text-white p-0.5 transition-colors flex-shrink-0 cursor-pointer"
                 >
                   <X className="h-4 w-4" />
                 </button>

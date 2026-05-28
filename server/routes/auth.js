@@ -20,7 +20,7 @@ function getMockSalt(email) {
  * Retrieves the salt for the specified email.
  * If user does not exist, returns a mock salt to prevent username enumeration.
  */
-router.get('/salt', async (req, res) => {
+router.get('/salt', (req, res) => {
   const { email } = req.query;
 
   if (!email) {
@@ -30,8 +30,7 @@ router.get('/salt', async (req, res) => {
   const normalizedEmail = email.toLowerCase().trim();
 
   try {
-    const userRes = await db.query('SELECT salt FROM users WHERE email = $1', [normalizedEmail]);
-    const user = userRes.rows[0];
+    const user = db.prepare('SELECT salt FROM users WHERE email = ?').get(normalizedEmail);
     
     if (user) {
       return res.json({ salt: user.salt, exists: true });
@@ -61,8 +60,7 @@ router.post('/register', async (req, res) => {
 
   try {
     // Check if user already exists
-    const existingRes = await db.query('SELECT id FROM users WHERE email = $1', [normalizedEmail]);
-    const existingUser = existingRes.rows[0];
+    const existingUser = db.prepare('SELECT id FROM users WHERE email = ?').get(normalizedEmail);
     if (existingUser) {
       return res.status(400).json({ error: 'Email is already registered.' });
     }
@@ -70,15 +68,14 @@ router.post('/register', async (req, res) => {
     // Bcrypt hash the client-side derived authHash
     const passwordHash = await bcrypt.hash(authHash, 10);
 
-    // Insert user into DB and return the generated ID
-    const insertRes = await db.query(
-      'INSERT INTO users (email, password_hash, salt) VALUES ($1, $2, $3) RETURNING id',
-      [normalizedEmail, passwordHash, salt]
-    );
+    // Insert user into DB
+    const result = db.prepare(
+      'INSERT INTO users (email, password_hash, salt) VALUES (?, ?, ?)'
+    ).run(normalizedEmail, passwordHash, salt);
 
     return res.status(201).json({ 
       message: 'User registered successfully.',
-      userId: insertRes.rows[0].id 
+      userId: result.lastInsertRowid 
     });
   } catch (error) {
     console.error('Registration error:', error);
@@ -100,8 +97,7 @@ router.post('/login', async (req, res) => {
   const normalizedEmail = email.toLowerCase().trim();
 
   try {
-    const userRes = await db.query('SELECT * FROM users WHERE email = $1', [normalizedEmail]);
-    const user = userRes.rows[0];
+    const user = db.prepare('SELECT * FROM users WHERE email = ?').get(normalizedEmail);
     
     if (!user) {
       // Wait a short random time to mitigate timing attacks on invalid users
@@ -147,8 +143,7 @@ router.post('/change-master-password', authMiddleware, async (req, res) => {
   }
 
   try {
-    const userRes = await db.query('SELECT password_hash FROM users WHERE id = $1', [userId]);
-    const user = userRes.rows[0];
+    const user = db.prepare('SELECT password_hash FROM users WHERE id = ?').get(userId);
     if (!user) {
       return res.status(404).json({ error: 'User not found.' });
     }
@@ -161,9 +156,10 @@ router.post('/change-master-password', authMiddleware, async (req, res) => {
     const newPasswordHash = await bcrypt.hash(newAuthHash, 10);
 
     // Update user auth hash and salt
-    await db.query(
-      'UPDATE users SET password_hash = $1, salt = $2 WHERE id = $3', 
-      [newPasswordHash, newSalt, userId]
+    db.prepare('UPDATE users SET password_hash = ?, salt = ? WHERE id = ?').run(
+      newPasswordHash,
+      newSalt,
+      userId
     );
 
     return res.json({ message: 'Master password updated successfully.' });
@@ -186,8 +182,7 @@ router.delete('/delete-account', authMiddleware, async (req, res) => {
   }
 
   try {
-    const userRes = await db.query('SELECT password_hash FROM users WHERE id = $1', [userId]);
-    const user = userRes.rows[0];
+    const user = db.prepare('SELECT password_hash FROM users WHERE id = ?').get(userId);
     if (!user) {
       return res.status(404).json({ error: 'User not found.' });
     }
@@ -198,7 +193,7 @@ router.delete('/delete-account', authMiddleware, async (req, res) => {
     }
 
     // Delete user from DB. Cascading foreign keys will delete all credentials
-    await db.query('DELETE FROM users WHERE id = $1', [userId]);
+    db.prepare('DELETE FROM users WHERE id = ?').run(userId);
 
     return res.json({ message: 'Account and all vault data deleted successfully.' });
   } catch (error) {

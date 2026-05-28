@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useVault } from '../context/VaultContext.jsx';
 import PasswordCard from '../components/PasswordCard.jsx';
 import PasswordModal from '../components/PasswordModal.jsx';
-import { LayoutGrid, List, Search, ShieldAlert, ShieldAlert as EmptyShield, Plus, Filter, ShieldCheck } from 'lucide-react';
+import { LayoutGrid, List, ShieldAlert as EmptyShield, Plus, Filter } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '../components/Toast.jsx';
 
@@ -68,36 +68,36 @@ export default function Vault() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-text-primary">Vault Credentials</h1>
-          <p className="text-sm text-text-secondary mt-1">
+          <h1 className="text-2xl font-bold text-white">Vault Credentials</h1>
+          <p className="text-sm text-[#8e9192] mt-1">
             Access, copy, and manage your encrypted logins.
           </p>
         </div>
 
         {/* View Mode & Add Button */}
         <div className="flex items-center gap-3">
-          <div className="flex items-center bg-primary-bg border border-border-custom rounded-xl p-1">
+          <div className="flex items-center bg-[#131313] border border-[#444748] p-1">
             <button
               onClick={() => setViewMode('grid')}
-              className={`p-1.5 rounded-lg cursor-pointer transition-colors ${viewMode === 'grid' ? 'bg-accent-purple/20 text-accent-purple' : 'text-text-muted hover:text-text-primary'}`}
+              className={`p-1.5 cursor-pointer transition-colors ${viewMode === 'grid' ? 'bg-white text-black' : 'text-[#8e9192] hover:text-white'}`}
               title="Grid View"
             >
-              <LayoutGrid className="h-4.5 w-4.5" />
+              <LayoutGrid className="h-4 w-4" />
             </button>
             <button
               onClick={() => setViewMode('list')}
-              className={`p-1.5 rounded-lg cursor-pointer transition-colors ${viewMode === 'list' ? 'bg-accent-purple/20 text-accent-purple' : 'text-text-muted hover:text-text-primary'}`}
+              className={`p-1.5 cursor-pointer transition-colors ${viewMode === 'list' ? 'bg-white text-black' : 'text-[#8e9192] hover:text-white'}`}
               title="List View"
             >
-              <List className="h-4.5 w-4.5" />
+              <List className="h-4 w-4" />
             </button>
           </div>
 
           <button
             onClick={() => { setEditingCredential(null); setIsModalOpen(true); }}
-            className="px-4 py-2 rounded-xl bg-gradient-to-r from-accent-purple to-accent-cyan text-white text-sm font-bold shadow-lg shadow-accent-purple/20 hover:shadow-accent-purple/40 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer flex items-center gap-1.5"
+            className="btn-primary flex items-center gap-1.5"
           >
-            <Plus className="h-4 w-4" /> Add New
+            <Plus className="h-4 w-4" /> ADD NEW
           </button>
         </div>
       </div>
@@ -106,20 +106,20 @@ export default function Vault() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-start">
         
         {/* Category Filter Sidebar */}
-        <div className="md:col-span-1 glass-card p-5 bg-card-bg/30 border-border-custom/50 space-y-4">
-          <h3 className="font-bold text-xs text-text-muted uppercase tracking-wider flex items-center gap-1.5 border-b border-border-custom/50 pb-2">
+        <div className="md:col-span-1 glass-card p-5 space-y-4">
+          <h3 className="label-caps flex items-center gap-1.5 border-b border-[#444748]/50 pb-2">
             <Filter className="h-3.5 w-3.5" /> Categories
           </h3>
           
-          <div className="flex flex-row md:flex-col overflow-x-auto md:overflow-x-visible gap-2 pb-2 md:pb-0 scrollbar-none">
+          <div className="flex flex-row md:flex-col overflow-x-auto md:overflow-x-visible gap-2 pb-2 md:pb-0" style={{ scrollbarWidth: 'none' }}>
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-3 py-2 rounded-xl text-xs font-semibold border text-left transition-all cursor-pointer flex-shrink-0 md:w-full ${
+                className={`px-3 py-2 text-xs font-semibold text-left transition-all cursor-pointer flex-shrink-0 md:w-full ${
                   selectedCategory === cat 
-                    ? 'bg-accent-purple/10 text-accent-purple border-accent-purple/30 shadow-sm shadow-accent-purple/10' 
-                    : 'bg-transparent text-text-secondary border-transparent hover:border-border-custom hover:text-text-primary'
+                    ? 'bg-white text-black' 
+                    : 'text-[#8e9192] hover:text-white border border-transparent hover:border-[#444748]'
                 }`}
               >
                 {cat}
@@ -137,20 +137,20 @@ export default function Vault() {
               {[1, 2, 3, 4, 5, 6].map(i => (
                 <div 
                   key={i} 
-                  className={`animate-pulse rounded-2xl border border-border-custom bg-card-bg/25 ${viewMode === 'grid' ? 'h-52' : 'h-18'}`} 
+                  className={`animate-pulse border border-[#444748] bg-[#131313]/25 ${viewMode === 'grid' ? 'h-52' : 'h-16'}`} 
                 />
               ))}
             </div>
           ) : filteredCredentials.length === 0 ? (
             
-            /* Empty State Illustration */
-            <div className="glass-card p-12 text-center bg-card-bg/20 border-border-custom/50 shadow-sm flex flex-col items-center justify-center space-y-4 min-h-[300px]">
-              <div className="p-4 rounded-full bg-slate-900 border border-slate-800 text-slate-400">
-                <EmptyShield className="h-10 w-10 text-text-muted" />
+            /* Empty State */
+            <div className="glass-card p-12 text-center flex flex-col items-center justify-center space-y-4 min-h-[300px]">
+              <div className="p-4 bg-[#131313] border border-[#444748]">
+                <EmptyShield className="h-10 w-10 text-[#8e9192]" />
               </div>
               <div>
-                <h3 className="font-bold text-base text-text-primary">No credentials found</h3>
-                <p className="text-xs text-text-secondary mt-1 max-w-xs mx-auto">
+                <h3 className="font-bold text-base text-white">No credentials found</h3>
+                <p className="text-xs text-[#8e9192] mt-1 max-w-xs mx-auto">
                   {searchQuery 
                     ? "We couldn't find any entries matching your search filter." 
                     : "Your vault is currently empty. Start by saving your first credential!"
@@ -160,9 +160,9 @@ export default function Vault() {
               {!searchQuery && (
                 <button
                   onClick={() => { setEditingCredential(null); setIsModalOpen(true); }}
-                  className="px-4 py-2 rounded-xl bg-accent-purple hover:bg-purple-600 text-white text-xs font-semibold transition-all cursor-pointer"
+                  className="btn-primary"
                 >
-                  Create An Entry
+                  CREATE AN ENTRY
                 </button>
               )}
             </div>

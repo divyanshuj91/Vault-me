@@ -1,123 +1,210 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary-bg: #0a0a0f;
-  --color-card-bg: #12121a;
-  --color-surface-bg: #1a1a2e;
-  --color-border-custom: #1e1e2e;
-  
-  --color-accent-purple: #7c3aed;
-  --color-accent-cyan: #06b6d4;
-  --color-accent-rose: #f43f5e;
-  --color-accent-amber: #f59e0b;
-  
+  /* Obsidian Vault - strictly monochromatic */
+  --color-vault-black: #000000;
+  --color-vault-bg: #0d0d0d;
+  --color-vault-surface: #131313;
+  --color-vault-surface-low: #1c1b1b;
+  --color-vault-surface-container: #201f1f;
+  --color-vault-surface-high: #2a2a2a;
+  --color-vault-surface-highest: #353534;
+  --color-vault-outline: #8e9192;
+  --color-vault-outline-variant: #444748;
+  --color-vault-white: #ffffff;
+  --color-vault-secondary: #c4c7c8;
+  --color-vault-error: #ffb4ab;
+
+  /* keep old names for compatibility */
+  --color-primary-bg: #0d0d0d;
+  --color-card-bg: #131313;
+  --color-border-custom: #444748;
   --color-text-primary: #ffffff;
-  --color-text-secondary: #94a3b8;
-  --color-text-muted: #475569;
+  --color-text-secondary: #c4c7c8;
+  --color-text-muted: #8e9192;
+
+  /* Remove color accents - replaced with white/gray */
+  --color-accent-purple: #ffffff;
+  --color-accent-cyan: #c4c7c8;
 }
 
 @layer base {
   body {
-    background-color: #0a0a0f;
-    color: #ffffff;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: #0d0d0d;
+    color: #e5e2e1;
+    font-family: 'Inter', system-ui, sans-serif;
     overflow-x: hidden;
   }
 
-  /* Custom Scrollbar */
-  ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-  
-  ::-webkit-scrollbar-track {
-    background: #0a0a0f;
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    background: #1a1a2e;
-    border-radius: 4px;
-    border: 2px solid #0a0a0f;
-  }
-  
-  ::-webkit-scrollbar-thumb:hover {
-    background: #7c3aed;
-  }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
 }
 
-/* Glassmorphism Styles */
+/* Obsidian Glass Card */
 .glass-card {
-  background: rgba(18, 18, 26, 0.7);
+  background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(30, 30, 46, 0.6);
-  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.5rem;
 }
 
+.glass-card:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Login glass card - heavier blur */
+.glass-card-heavy {
+  background: rgba(18, 18, 18, 0.5);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 0.75rem;
+}
+
+/* Vault item card */
+.vault-card {
+  background: #121212;
+  border: 1px solid #2e2e2e;
+  border-radius: 0.5rem;
+  transition: border-color 0.2s ease;
+}
+.vault-card:hover { border-color: #ffffff; }
+
+/* Obsidian input - bottom border only */
+.obsidian-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #444748;
+  border-radius: 0;
+  padding: 10px 0;
+  color: #ffffff;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s ease;
+  width: 100%;
+}
+.obsidian-input::placeholder { color: rgba(68, 71, 72, 0.6); }
+.obsidian-input:focus { border-bottom-color: #ffffff; }
+
+/* Primary button: white bg, black text */
+.btn-primary {
+  background: #ffffff;
+  color: #000000;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 12px 24px;
+  border: 1px solid #ffffff;
+  border-radius: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+.btn-primary:hover {
+  background: transparent;
+  color: #ffffff;
+}
+
+/* Secondary button: transparent, white border */
+.btn-secondary {
+  background: transparent;
+  color: #8e9192;
+  border: 1px solid #444748;
+  border-radius: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 12px;
+  padding: 10px 20px;
+}
+.btn-secondary:hover {
+  border-color: #ffffff;
+  color: #ffffff;
+}
+
+/* Label caps style */
+.label-caps {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #8e9192;
+}
+
+/* Data mono style */
+.font-mono-data {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+}
+
+/* Strength bar */
+.strength-bar {
+  height: 2px;
+  background: #2a2a2a;
+  width: 100%;
+  overflow: hidden;
+}
+.strength-fill {
+  height: 100%;
+  background: #ffffff;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+/* Glass surface (modal backgrounds) */
 .glass-surface {
-  background: rgba(26, 26, 46, 0.4);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(30, 30, 46, 0.4);
-}
-
-.glass-modal {
-  background: rgba(10, 10, 15, 0.85);
+  background: rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(124, 58, 237, 0.2);
+  border: 1px solid rgba(255,255,255,0.08);
 }
 
-/* Glowing Border and Shadow Interactions */
-.glow-purple-hover:hover {
-  border-color: rgba(124, 58, 237, 0.5);
-  box-shadow: 0 0 15px rgba(124, 58, 237, 0.2);
-  transform: translateY(-2px);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+/* Nav active link */
+.nav-active {
+  background: #353534;
+  color: #ffffff;
+  border-radius: 0.375rem;
 }
 
-.glow-cyan-hover:hover {
-  border-color: rgba(6, 182, 212, 0.5);
-  box-shadow: 0 0 15px rgba(6, 182, 212, 0.2);
-  transform: translateY(-2px);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.glow-focus:focus-within {
-  border-color: rgba(124, 58, 237, 0.8);
-  box-shadow: 0 0 12px rgba(124, 58, 237, 0.3);
-  outline: none;
-}
-
-/* Gradient Background blobs animation */
+/* Keep blob animations but invisible (gray only) */
 @keyframes float-blob-1 {
-  0%, 100% {
-    transform: translate(0px, 0px) scale(1);
-  }
-  33% {
-    transform: translate(40px, -60px) scale(1.2);
-  }
-  66% {
-    transform: translate(-30px, 20px) scale(0.8);
-  }
+  0%, 100% { transform: translate(0px, 0px) scale(1); }
+  33% { transform: translate(40px, -60px) scale(1.2); }
+  66% { transform: translate(-30px, 20px) scale(0.8); }
 }
+.animate-blob-1 { animation: float-blob-1 15s infinite ease-in-out; }
 
-@keyframes float-blob-2 {
-  0%, 100% {
-    transform: translate(0px, 0px) scale(1.1);
-  }
-  33% {
-    transform: translate(-50px, 50px) scale(0.9);
-  }
-  66% {
-    transform: translate(40px, -30px) scale(1.3);
-  }
+/* Dark input style for modals/settings */
+.dark-input {
+  background: #0d0d0d;
+  border: 1px solid #444748;
+  border-radius: 0;
+  padding: 8px 12px;
+  color: #ffffff;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s ease;
+  width: 100%;
 }
+.dark-input:focus { border-color: #ffffff; }
+.dark-input::placeholder { color: rgba(142, 145, 146, 0.4); }
 
-.animate-blob-1 {
-  animation: float-blob-1 15s infinite ease-in-out;
+/* Dark select */
+.dark-select {
+  background: #0d0d0d;
+  border: 1px solid #444748;
+  border-radius: 0;
+  padding: 8px 12px;
+  color: #ffffff;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s ease;
+  width: 100%;
+  cursor: pointer;
 }
-
-.animate-blob-2 {
-  animation: float-blob-2 20s infinite ease-in-out;
-}
+.dark-select:focus { border-color: #ffffff; }
+.dark-select option { background: #0d0d0d; color: #ffffff; }

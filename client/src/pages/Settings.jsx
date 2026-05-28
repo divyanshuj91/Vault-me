@@ -211,8 +211,8 @@ export default function Settings() {
       
       {/* Page Header */}
       <div>
-        <h1 className="text-2xl font-bold text-text-primary">Vault Settings</h1>
-        <p className="text-sm text-text-secondary mt-1">
+        <h1 className="text-2xl font-bold text-white">Vault Settings</h1>
+        <p className="text-sm text-[#8e9192] mt-1">
           Configure security timeouts, backup imports/exports, themes, and account options.
         </p>
       </div>
@@ -221,70 +221,70 @@ export default function Settings() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
         {/* Change Master Password Block */}
-        <div className="glass-card p-6 bg-card-bg/40 border-border-custom/50 shadow-md space-y-4">
-          <h3 className="font-bold text-sm text-text-primary flex items-center gap-2">
-            <Lock className="h-4 w-4 text-accent-purple" /> Change Master Password
+        <div className="glass-card p-6 space-y-4">
+          <h3 className="label-caps flex items-center gap-2">
+            <Lock className="h-4 w-4" /> Change Master Password
           </h3>
-          <p className="text-xs text-text-secondary">
+          <p className="text-xs text-[#8e9192]">
             Changing your master password will re-encrypt all stored vault items with the new cryptographic key derived from it.
           </p>
 
-          <form onSubmit={handleUpdatePassword} className="space-y-3.5">
+          <form onSubmit={handleUpdatePassword} className="space-y-4">
             <div className="space-y-1">
-              <label className="text-[10px] text-text-secondary font-semibold uppercase">Current Master Password</label>
+              <label className="label-caps block">Current Master Password</label>
               <input
                 type="password"
                 required
                 value={currPass}
                 onChange={(e) => setCurrPass(e.target.value)}
-                className="w-full px-3.5 py-2 rounded-xl border border-border-custom bg-primary-bg/50 text-text-primary text-xs font-mono focus:outline-none focus:border-accent-purple transition-all"
+                className="dark-input"
               />
             </div>
             <div className="space-y-1">
-              <label className="text-[10px] text-text-secondary font-semibold uppercase">New Master Password</label>
+              <label className="label-caps block">New Master Password</label>
               <input
                 type="password"
                 required
                 value={newPass}
                 onChange={(e) => setNewPass(e.target.value)}
-                className="w-full px-3.5 py-2 rounded-xl border border-border-custom bg-primary-bg/50 text-text-primary text-xs font-mono focus:outline-none focus:border-accent-purple transition-all"
+                className="dark-input"
               />
             </div>
             <div className="space-y-1">
-              <label className="text-[10px] text-text-secondary font-semibold uppercase">Confirm New Password</label>
+              <label className="label-caps block">Confirm New Password</label>
               <input
                 type="password"
                 required
                 value={confirmPass}
                 onChange={(e) => setConfirmPass(e.target.value)}
-                className="w-full px-3.5 py-2 rounded-xl border border-border-custom bg-primary-bg/50 text-text-primary text-xs font-mono focus:outline-none focus:border-accent-purple transition-all"
+                className="dark-input"
               />
             </div>
             <button
               type="submit"
               disabled={isUpdatingPass}
-              className="px-4 py-2 rounded-xl bg-accent-purple text-white text-xs font-bold shadow-lg shadow-accent-purple/20 hover:bg-purple-600 transition-all cursor-pointer flex items-center gap-1.5"
+              className="btn-primary flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isUpdatingPass && <Loader2 className="h-3 w-3 animate-spin" />}
-              Update Master Password
+              UPDATE PASSWORD
             </button>
           </form>
         </div>
 
         {/* Global Security Settings (Auto-Lock & Theme) */}
-        <div className="glass-card p-6 bg-card-bg/40 border-border-custom/50 shadow-md space-y-6">
+        <div className="glass-card p-6 space-y-6">
           {/* Auto Lock Timer */}
           <div className="space-y-3">
-            <h3 className="font-bold text-sm text-text-primary flex items-center gap-2">
-              <Clock className="h-4 w-4 text-accent-cyan" /> Auto-Lock Vault Timer
+            <h3 className="label-caps flex items-center gap-2">
+              <Clock className="h-4 w-4" /> Auto-Lock Vault Timer
             </h3>
-            <p className="text-xs text-text-secondary">
+            <p className="text-xs text-[#8e9192]">
               Configure user inactivity timeouts. Vault state will automatically clear and lock when inactive.
             </p>
             <select
               value={autoLockTime}
               onChange={(e) => setAutoLockTime(Number(e.target.value))}
-              className="w-full px-3.5 py-2 rounded-xl border border-border-custom bg-primary-bg/50 text-text-primary text-xs focus:outline-none focus:border-accent-purple transition-all"
+              className="dark-select"
             >
               <option value={1}>1 Minute</option>
               <option value={5}>5 Minutes</option>
@@ -293,12 +293,12 @@ export default function Settings() {
             </select>
           </div>
 
-          {/* Theme Accent Color */}
-          <div className="space-y-3 pt-4 border-t border-border-custom/50">
-            <h3 className="font-bold text-sm text-text-primary flex items-center gap-2">
-              <Palette className="h-4 w-4 text-accent-cyan" /> Accent Color Theme
+          {/* Theme Accent Color - kept for compatibility */}
+          <div className="space-y-3 pt-4 border-t border-[#444748]/50">
+            <h3 className="label-caps flex items-center gap-2">
+              <Palette className="h-4 w-4" /> Accent Color Theme
             </h3>
-            <p className="text-xs text-text-secondary">
+            <p className="text-xs text-[#8e9192]">
               Customize the accent gradient color scheme of the Vaultme portal.
             </p>
             
@@ -313,8 +313,8 @@ export default function Settings() {
                   key={theme.id}
                   onClick={() => setThemeColor(theme.id)}
                   title={`Select ${theme.id}`}
-                  className={`h-7 w-7 rounded-full cursor-pointer transition-transform ${theme.class} hover:scale-110 active:scale-95 ${
-                    themeColor === theme.id ? 'ring-2 ring-white ring-offset-2 ring-offset-[#0a0a0f]' : ''
+                  className={`h-6 w-6 cursor-pointer transition-transform ${theme.class} hover:scale-110 active:scale-95 ${
+                    themeColor === theme.id ? 'ring-2 ring-white ring-offset-2 ring-offset-[#0d0d0d]' : ''
                   }`}
                 />
               ))}
@@ -323,32 +323,32 @@ export default function Settings() {
         </div>
 
         {/* Data Export / Import Block */}
-        <div className="glass-card p-6 bg-card-bg/40 border-border-custom/50 shadow-md space-y-4 md:col-span-2">
-          <h3 className="font-bold text-sm text-text-primary flex items-center gap-2">
-            <FileText className="h-4 w-4 text-accent-cyan" /> Backup & Migration
+        <div className="glass-card p-6 space-y-4 md:col-span-2">
+          <h3 className="label-caps flex items-center gap-2">
+            <FileText className="h-4 w-4" /> Backup & Migration
           </h3>
-          <p className="text-xs text-text-secondary">
-            Move data in and out. Exports downloaded from the server are safely encrypted blobs. Imports from CSV require headers: <b>siteName</b>, <b>username</b>, <b>password</b>.
+          <p className="text-xs text-[#8e9192]">
+            Move data in and out. Exports downloaded from the server are safely encrypted blobs. Imports from CSV require headers: <span className="text-white">siteName</span>, <span className="text-white">username</span>, <span className="text-white">password</span>.
           </p>
 
           <div className="flex flex-wrap gap-4 pt-2">
             {/* Export */}
             <button
               onClick={handleExportVault}
-              className="px-4 py-2.5 rounded-xl border border-border-custom bg-transparent text-text-secondary hover:text-text-primary hover:bg-white/5 text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
+              className="btn-secondary flex items-center gap-1.5"
             >
-              <Download className="h-4 w-4 text-accent-purple" /> Export Encrypted Vault (JSON)
+              <Download className="h-4 w-4" /> Export Encrypted Vault (JSON)
             </button>
 
             {/* Import */}
-            <label className="px-4 py-2.5 rounded-xl border border-border-custom bg-transparent text-text-secondary hover:text-text-primary hover:bg-white/5 text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer">
+            <label className="btn-secondary flex items-center gap-1.5 cursor-pointer">
               {importingFile ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" /> Importing...
                 </>
               ) : (
                 <>
-                  <Upload className="h-4 w-4 text-accent-cyan" /> Import from CSV
+                  <Upload className="h-4 w-4" /> Import from CSV
                 </>
               )}
               <input
@@ -363,43 +363,44 @@ export default function Settings() {
         </div>
 
         {/* Danger Zone: Delete Account */}
-        <div className="glass-card p-6 bg-red-950/15 border-red-500/20 shadow-md space-y-4 md:col-span-2">
-          <h3 className="font-bold text-sm text-red-400 flex items-center gap-2">
-            <Trash2 className="h-4 w-4 text-red-400" /> Danger Zone: Delete Account
+        <div className="glass-card p-6 space-y-4 md:col-span-2" style={{ borderColor: 'rgba(255,68,68,0.2)', borderLeftWidth: '3px', borderLeftColor: '#ff4444' }}>
+          <h3 className="text-xs font-bold text-white flex items-center gap-2 uppercase tracking-widest">
+            <Trash2 className="h-4 w-4 text-white" /> Danger Zone: Delete Account
           </h3>
-          <p className="text-xs text-red-200/60">
+          <p className="text-xs text-[#8e9192]">
             Deleting your account will permanently wipe your user profile and delete all encrypted passwords saved on the database. This action is irreversible.
           </p>
 
           {!showDeleteConfirm ? (
             <button
               onClick={() => setShowDeleteConfirm(true)}
-              className="px-4 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 text-xs font-bold transition-all cursor-pointer"
+              className="px-4 py-2 border border-[#ff4444]/30 bg-transparent text-[#ff4444] text-xs font-bold transition-all cursor-pointer hover:bg-[#ff4444]/10 uppercase tracking-wider"
             >
               Delete Account...
             </button>
           ) : (
             <form onSubmit={handleDeleteAccount} className="space-y-3 max-w-sm pt-2">
-              <div className="flex gap-2 p-3.5 rounded-xl border border-red-500/20 bg-red-500/5 text-red-300 text-[11px] leading-tight">
-                <AlertTriangle className="h-4 w-4 flex-shrink-0 mt-0.5" />
+              <div className="flex gap-2 p-3.5 border border-[#ff4444]/20 bg-[#ff4444]/5 text-[#8e9192] text-[11px] leading-tight">
+                <AlertTriangle className="h-4 w-4 flex-shrink-0 mt-0.5 text-white" />
                 <span>To confirm account destruction, please enter your master password below.</span>
               </div>
               <div className="space-y-1">
-                <label className="text-[9px] text-red-400 font-bold uppercase">Master Password</label>
+                <label className="label-caps text-[#ff4444]/70 block">Master Password</label>
                 <input
                   type="password"
                   required
                   value={deletePass}
                   onChange={(e) => setDeletePass(e.target.value)}
                   placeholder="Master password"
-                  className="w-full px-3 py-2 rounded-xl border border-red-500/20 bg-primary-bg/50 text-text-primary text-xs font-mono focus:outline-none focus:border-red-500 transition-all"
+                  className="dark-input"
+                  style={{ borderColor: 'rgba(255,68,68,0.3)' }}
                 />
               </div>
               <div className="flex items-center gap-2">
                 <button
                   type="submit"
                   disabled={isDeleting}
-                  className="px-4 py-2 rounded-xl bg-red-500 hover:bg-red-600 text-white text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
+                  className="px-4 py-2 bg-[#ff4444] hover:bg-[#cc0000] text-white text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 uppercase tracking-wider"
                 >
                   {isDeleting && <Loader2 className="h-3 w-3 animate-spin" />}
                   Confirm Permanent Deletion
@@ -407,7 +408,7 @@ export default function Settings() {
                 <button
                   type="button"
                   onClick={() => { setShowDeleteConfirm(false); setDeletePass(''); }}
-                  className="px-4 py-2 rounded-xl border border-border-custom bg-transparent text-text-secondary hover:text-text-primary hover:bg-white/5 text-xs font-semibold transition-all cursor-pointer"
+                  className="btn-secondary text-xs"
                 >
                   Cancel
                 </button>

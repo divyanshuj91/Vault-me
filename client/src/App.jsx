@@ -85,12 +85,15 @@ function ProtectedRoute() {
 
   // Unlocked & Logged In: Render Main Dashboard Layout with Sub-Navigation Links
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-[#0d0d0d]">
       <Navbar />
 
+      {/* Spacer for fixed Navbar height (h-16 = 4rem) */}
+      <div className="h-16 flex-shrink-0" />
+
       {/* Dynamic Sub-Navigation Bar */}
-      <div className="w-full px-6 py-2 border-b border-border-custom bg-card-bg/20">
-        <div className="max-w-7xl mx-auto flex items-center gap-1 overflow-x-auto scrollbar-none">
+      <div className="w-full px-6 py-2 border-b border-[#444748] bg-[#131313]/60">
+        <div className="max-w-7xl mx-auto flex items-center gap-1 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
           <SubNavLink to="/dashboard" icon={<LayoutDashboard className="h-4 w-4" />} label="Dashboard" />
           <SubNavLink to="/vault" icon={<Key className="h-4 w-4" />} label="Vault Items" />
           <SubNavLink to="/generator" icon={<Sparkles className="h-4 w-4" />} label="Generator" />
@@ -121,10 +124,10 @@ function SubNavLink({ to, icon, label }) {
   return (
     <Link
       to={to}
-      className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border flex-shrink-0 ${
+      className={`px-3.5 py-2 text-xs font-semibold transition-all flex items-center gap-2 flex-shrink-0 ${
         isActive
-          ? 'bg-accent-purple/10 text-accent-purple border-accent-purple/30 shadow-sm shadow-accent-purple/5'
-          : 'bg-transparent text-text-secondary border-transparent hover:border-border-custom hover:text-text-primary'
+          ? 'bg-[#353534] text-white rounded'
+          : 'text-[#8e9192] hover:text-white rounded'
       }`}
     >
       {icon}
@@ -157,69 +160,67 @@ function UnlockScreen() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4 relative overflow-hidden bg-primary-bg">
-      {/* Glow blobs */}
-      <div className="absolute top-1/3 left-1/3 w-64 h-64 rounded-full bg-accent-purple/5 blur-[90px] pointer-events-none" />
-      
-      <div className="w-full max-w-sm glass-card p-8 bg-card-bg/60 border-border-custom/50 shadow-2xl relative text-center">
-        <div className="inline-flex p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 mb-4 animate-pulse">
-          <Lock className="h-6 w-6" />
-        </div>
-        
-        <h2 className="text-xl font-bold text-text-primary">Vault Locked</h2>
-        <p className="text-xs text-text-secondary mt-1 max-w-[240px] mx-auto truncate" title={user?.email}>
-          Logged in as: {user?.email}
-        </p>
-
-        <form onSubmit={handleUnlockSubmit} className="space-y-4 mt-6">
-          <div className="space-y-1 text-left">
-            <label className="text-[10px] text-text-secondary font-bold uppercase">Master Password</label>
-            <div className="relative">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                required
-                value={masterPassword}
-                onChange={(e) => setMasterPassword(e.target.value)}
-                placeholder="••••••••••••"
-                className="w-full pl-3.5 pr-11 py-2.5 rounded-xl border border-border-custom bg-primary-bg/50 text-text-primary text-sm font-mono focus:outline-none focus:border-accent-purple transition-all duration-300"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3.5 inset-y-0 flex items-center text-text-muted hover:text-text-primary transition-colors cursor-pointer"
-              >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </button>
+    <div className="min-h-screen w-full flex items-center justify-center p-4 bg-black">
+      <div className="w-full max-w-[440px] p-4">
+        <div className="glass-card-heavy p-10 flex flex-col items-center">
+          {/* Shield Icon */}
+          <div className="mb-6 flex justify-center">
+            <div className="w-12 h-12 rounded-lg border border-white/20 flex items-center justify-center bg-[#121212]">
+              <Lock className="h-6 w-6 text-white" />
             </div>
           </div>
 
+          <div className="text-center mb-8">
+            <h1 className="text-2xl font-medium text-white mb-1">Vault Locked</h1>
+            <p className="text-[14px] text-[#737373]" title={user?.email}>
+              {user?.email}
+            </p>
+          </div>
+
+          <form onSubmit={handleUnlockSubmit} className="w-full space-y-6">
+            <div className="space-y-1">
+              <label className="label-caps block">MASTER_PASSWORD</label>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  value={masterPassword}
+                  onChange={(e) => setMasterPassword(e.target.value)}
+                  placeholder="••••••••••••"
+                  className="obsidian-input pr-8"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-0 bottom-3 text-[#8e9192] hover:text-white transition-colors cursor-pointer"
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isUnlocking}
+              className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isUnlocking ? 'UNLOCKING...' : 'UNLOCK VAULT'}
+            </button>
+          </form>
+
+          <div className="flex items-center my-6 w-full">
+            <div className="flex-1 h-px bg-[#444748]/50" />
+            <span className="label-caps px-3">OR</span>
+            <div className="flex-1 h-px bg-[#444748]/50" />
+          </div>
+
           <button
-            type="submit"
-            disabled={isUnlocking}
-            className="w-full py-2.5 rounded-xl bg-gradient-to-r from-accent-purple to-accent-cyan text-white text-sm font-bold shadow-lg shadow-accent-purple/20 hover:scale-[1.01] transition-all cursor-pointer flex items-center justify-center gap-1.5"
+            onClick={logout}
+            className="label-caps text-[#8e9192] hover:text-white transition-colors cursor-pointer"
           >
-            {isUnlocking ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" /> Unlocking...
-              </>
-            ) : (
-              'Unlock Vault'
-            )}
+            Switch Account / Log Out
           </button>
-        </form>
-
-        <div className="flex items-center my-6">
-          <div className="flex-1 h-px bg-border-custom/50" />
-          <span className="text-[9px] text-text-muted px-3 uppercase tracking-wider font-semibold">Or</span>
-          <div className="flex-1 h-px bg-border-custom/50" />
         </div>
-
-        <button
-          onClick={logout}
-          className="text-xs text-red-400 hover:text-red-300 transition-colors hover:underline cursor-pointer font-semibold"
-        >
-          Switch Account / Log Out
-        </button>
       </div>
     </div>
   );

@@ -1,64 +1,56 @@
-import pg from 'pg';
+import Database from 'better-sqlite3';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-const connectionString = process.env.DATABASE_URL;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-if (!connectionString) {
-  console.warn('DATABASE_URL environment variable is not defined.');
+const dbPath = process.env.DB_PATH || 'vault.db';
+const resolvedDbPath = path.isAbsolute(dbPath) 
+  ? dbPath 
+  : path.resolve(__dirname, '..', dbPath);
+
+console.log(`Connecting to SQLite database at: ${resolvedDbPath}`);
+
+const db = new Database(resolvedDbPath, { verbose: console.log });
+
+// Enable foreign key support
+db.pragma('foreign_keys = ON');
+
+export function initDatabase() {
+  // Create Users Table
+  db.prepare(`
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      email TEXT UNIQUE NOT NULL,
+      password_hash TEXT NOT NULL,
+      salt TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `).run();
+
+  // Create Credentials Table
+  db.prepare(`
+    CREATE TABLE IF NOT EXISTS credentials (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      site_name TEXT NOT NULL,
+      url TEXT,
+      username TEXT NOT NULL,
+      password TEXT NOT NULL,
+      category TEXT,
+      notes TEXT,
+      last_changed_at TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+    )
+  `).run();
+
+  console.log('Database tables initialized successfully.');
 }
 
-// Neon and Supabase require SSL. Enable rejectUnauthorized: false for remote databases
-const pool = new pg.Pool({
-  connectionString,
-  ssl: connectionString && !connectionString.includes('localhost') && !connectionString.includes('127.0.0.1')
-    ? { rejectUnauthorized: false }
-    : false
-});
-
-export const query = (text, params) => pool.query(text, params);
-
-export async function initDatabase() {
-  try {
-    // Create Users Table (PostgreSQL format)
-    await query(`
-      CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY,
-        email VARCHAR(255) UNIQUE NOT NULL,
-        password_hash VARCHAR(255) NOT NULL,
-        salt VARCHAR(255) NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-
-    // Create Credentials Table (PostgreSQL format)
-    await query(`
-      CREATE TABLE IF NOT EXISTS credentials (
-        id SERIAL PRIMARY KEY,
-        user_id INT NOT NULL,
-        site_name VARCHAR(255) NOT NULL,
-        url VARCHAR(255),
-        username VARCHAR(255) NOT NULL,
-        password VARCHAR(255) NOT NULL,
-        category VARCHAR(100),
-        notes TEXT,
-        last_changed_at VARCHAR(255) NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
-      )
-    `);
-
-    console.log('PostgreSQL database tables verified/created successfully.');
-  } catch (error) {
-    console.error('Error migrating PostgreSQL database:', error);
-    throw error;
-  }
-}
-
-export default {
-  query,
-  initDatabase,
-  pool
-};
+export default db;

@@ -2,9 +2,8 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../components/Toast.jsx';
 import { useNavigate } from 'react-router-dom';
-import { Shield, Lock, Eye, EyeOff, UserPlus, LogIn, Fingerprint, Loader2 } from 'lucide-react';
+import { Shield, Eye, EyeOff, Fingerprint, Loader2 } from 'lucide-react';
 import StrengthMeter from '../components/StrengthMeter.jsx';
-import { motion } from 'framer-motion';
 
 export default function Login() {
   const { login, register } = useAuth();
@@ -66,62 +65,64 @@ export default function Login() {
   };
 
   return (
-    <div className="relative min-h-[90vh] w-full flex items-center justify-center p-4 overflow-hidden">
-      
-      {/* Floating Animated Gradient Background Blobs */}
-      <div className="absolute top-1/4 left-1/4 w-72 h-72 rounded-full bg-accent-purple/10 blur-[90px] animate-blob-1 pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-accent-cyan/10 blur-[100px] animate-blob-2 pointer-events-none" />
-      
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="w-full max-w-md"
-      >
-        {/* Logo and Tagline */}
-        <div className="text-center mb-8">
-          <div className="inline-flex p-3 rounded-2xl bg-gradient-to-br from-accent-purple to-accent-cyan text-white shadow-xl shadow-accent-purple/20 mb-4">
-            <Shield className="h-8 w-8" />
-          </div>
-          <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">
-            Vault<span className="text-accent-purple font-black">me</span>
-          </h1>
-          <p className="text-sm text-text-secondary mt-1.5 font-medium tracking-wide">
-            Your vault. Your rules.
-          </p>
-        </div>
+    <div className="min-h-screen w-full flex items-center justify-center p-4 bg-black">
+      <div className="w-full max-w-[440px]">
+        <div className="glass-card-heavy p-10 flex flex-col items-center">
 
-        {/* Auth Glassmorphism Card */}
-        <div className="glass-card p-8 bg-card-bg/60 border-border-custom/50 shadow-2xl relative">
-          <h2 className="text-xl font-bold text-text-primary mb-6 flex items-center gap-2">
-            {isLoginMode ? (
-              <>
-                <LogIn className="h-5 w-5 text-accent-purple" /> Unlock Vault
-              </>
-            ) : (
-              <>
-                <UserPlus className="h-5 w-5 text-accent-cyan" /> Create Master Account
-              </>
-            )}
-          </h2>
+          {/* Header: Shield icon + title */}
+          <header className="text-center mb-10 w-full">
+            <div className="mb-2 flex justify-center">
+              <div className="w-12 h-12 rounded-lg border border-white/20 flex items-center justify-center bg-[#121212] mb-4">
+                <Shield className="h-6 w-6 text-white" />
+              </div>
+            </div>
+            <h1 className="text-2xl font-medium text-white mb-1">
+              {isLoginMode ? 'Vault Locked' : 'Create Vault'}
+            </h1>
+            <p className="text-[14px] text-[#737373]">Your sovereign password manager</p>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Tab toggle: underline style */}
+            <div className="flex justify-center gap-6 mt-6">
+              <button
+                onClick={() => setIsLoginMode(true)}
+                className={`pb-1 text-sm font-medium transition-all cursor-pointer ${
+                  isLoginMode
+                    ? 'text-white border-b border-white'
+                    : 'text-[#8e9192] hover:text-white border-b border-transparent'
+                }`}
+              >
+                Login
+              </button>
+              <button
+                onClick={() => setIsLoginMode(false)}
+                className={`pb-1 text-sm font-medium transition-all cursor-pointer ${
+                  !isLoginMode
+                    ? 'text-white border-b border-white'
+                    : 'text-[#8e9192] hover:text-white border-b border-transparent'
+                }`}
+              >
+                Register
+              </button>
+            </div>
+          </header>
+
+          <form onSubmit={handleSubmit} className="w-full space-y-6">
             {/* Email Field */}
             <div className="space-y-1">
-              <label className="text-xs text-text-secondary font-semibold">Email Address</label>
+              <label className="label-caps block">EMAIL_ADDRESS</label>
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@domain.com"
-                className="w-full px-3.5 py-2.5 rounded-xl border border-border-custom bg-primary-bg/50 text-text-primary text-sm focus:outline-none focus:border-accent-purple transition-all duration-300"
+                placeholder="user@domain.com"
+                className="obsidian-input"
               />
             </div>
 
             {/* Master Password Field */}
             <div className="space-y-1">
-              <label className="text-xs text-text-secondary font-semibold">Master Password</label>
+              <label className="label-caps block">MASTER_PASSWORD</label>
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
@@ -129,21 +130,21 @@ export default function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
-                  className="w-full pl-3.5 pr-11 py-2.5 rounded-xl border border-border-custom bg-primary-bg/50 text-text-primary text-sm font-mono focus:outline-none focus:border-accent-purple transition-all duration-300"
+                  className="obsidian-input pr-8"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 inset-y-0 flex items-center text-text-muted hover:text-text-primary transition-colors cursor-pointer"
+                  className="absolute right-0 bottom-3 text-[#8e9192] hover:text-white transition-colors cursor-pointer"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
-              
-              {/* Strength indicator in registration mode */}
+
+              {/* Strength bar - 2px, white fill */}
               {!isLoginMode && password && (
-                <div className="pt-1">
-                  <StrengthMeter password={password} showFeedback={true} />
+                <div className="pt-2">
+                  <StrengthMeter password={password} showFeedback={false} />
                 </div>
               )}
             </div>
@@ -151,14 +152,14 @@ export default function Login() {
             {/* Confirm Password (only register) */}
             {!isLoginMode && (
               <div className="space-y-1">
-                <label className="text-xs text-text-secondary font-semibold">Confirm Master Password</label>
+                <label className="label-caps block">CONFIRM_PASSWORD</label>
                 <input
                   type="password"
                   required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="••••••••••••"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-border-custom bg-primary-bg/50 text-text-primary text-sm font-mono focus:outline-none focus:border-accent-purple transition-all duration-300"
+                  className="obsidian-input"
                 />
               </div>
             )}
@@ -167,52 +168,46 @@ export default function Login() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-2.5 rounded-xl bg-gradient-to-r from-accent-purple to-accent-cyan text-white text-sm font-bold shadow-lg shadow-accent-purple/20 hover:shadow-accent-purple/40 hover:scale-[1.01] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2 mt-6"
+              className="btn-primary w-full flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin" /> Unlocking...
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  {isLoginMode ? 'UNLOCKING...' : 'CREATING...'}
                 </>
               ) : isLoginMode ? (
-                <>
-                  <Lock className="h-4 w-4" /> Unlock Vault
-                </>
+                'UNLOCK VAULT'
               ) : (
-                'Create Account'
+                'CREATE VAULT'
               )}
             </button>
           </form>
 
-          {/* Divider */}
-          <div className="flex items-center my-6">
-            <div className="flex-1 h-px bg-border-custom/50" />
-            <span className="text-[10px] text-text-muted px-3 uppercase tracking-wider font-semibold">Or</span>
-            <div className="flex-1 h-px bg-border-custom/50" />
-          </div>
-
           {/* Biometric unlock (Login mode only) */}
           {isLoginMode && (
-            <button
-              onClick={handleBiometric}
-              className="w-full py-2.5 rounded-xl border border-border-custom bg-transparent text-text-secondary hover:text-text-primary hover:bg-white/5 text-sm font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer mb-4"
-            >
-              <Fingerprint className="h-5 w-5 text-accent-cyan" />
-              Unlock with Biometrics
-            </button>
+            <div className="w-full mt-4">
+              <button
+                onClick={handleBiometric}
+                className="btn-secondary w-full flex items-center justify-center gap-2 py-3 text-[11px] uppercase tracking-widest"
+              >
+                <Fingerprint className="h-4 w-4" />
+                Unlock with Biometrics
+              </button>
+            </div>
           )}
 
-          {/* Toggle Login/Register Mode */}
-          <div className="text-center text-xs">
+          {/* Toggle Login/Register */}
+          <div className="text-center mt-6">
             <button
               onClick={() => setIsLoginMode(!isLoginMode)}
-              className="text-text-muted hover:text-text-primary transition-colors hover:underline cursor-pointer"
+              className="label-caps text-[#8e9192] hover:text-white transition-colors cursor-pointer"
             >
-              {isLoginMode ? "Don't have a vault yet? Sign up" : 'Already have a vault? Log in'}
+              {isLoginMode ? "Don't have a vault? Sign up" : 'Already have a vault? Log in'}
             </button>
           </div>
 
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
