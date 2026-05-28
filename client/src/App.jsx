@@ -13,6 +13,7 @@ import Vault from './pages/Vault.jsx';
 import Generator from './pages/Generator.jsx';
 import Audit from './pages/Audit.jsx';
 import Settings from './pages/Settings.jsx';
+import Landing from './pages/Landing.jsx';
 
 // Components
 import Navbar from './components/Navbar.jsx';
@@ -25,21 +26,21 @@ function AppContent() {
 
   return (
     <Routes>
-      {/* Public Route */}
+      {/* Public Routes */}
+      <Route path="/" element={<Landing />} />
       <Route path="/login" element={!token ? <Login /> : <Navigate to="/dashboard" />} />
 
       {/* Protected Routes Layout */}
-      <Route path="/" element={<ProtectedRoute />}>
-        <Route index element={<Navigate to="/dashboard" />} />
-        <Route path="dashboard" element={<Dashboard />} />
-        <Route path="vault" element={<Vault />} />
-        <Route path="generator" element={<Generator />} />
-        <Route path="audit" element={<Audit />} />
-        <Route path="settings" element={<Settings />} />
+      <Route element={<ProtectedRoute />}>
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/vault" element={<Vault />} />
+        <Route path="/generator" element={<Generator />} />
+        <Route path="/audit" element={<Audit />} />
+        <Route path="/settings" element={<Settings />} />
       </Route>
 
       {/* Fallback */}
-      <Route path="*" element={<Navigate to="/dashboard" />} />
+      <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );
 }
