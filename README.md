@@ -4,7 +4,7 @@ Vaultme is a full-stack, local-first web application designed to store, manage, 
 
 ---
 
-## 🔐 Cryptographic & Security Architecture
+##  Cryptographic & Security Architecture
 
 1. **Key Derivation (PBKDF2):**
    - When registering or logging in, the client retrieves a random, unique salt from the backend.
@@ -29,7 +29,7 @@ Vaultme is a full-stack, local-first web application designed to store, manage, 
 
 ---
 
-## 🎨 Design System & Aesthetics
+##  Design System & Aesthetics
 
 - **Dark-Only Theme:** Sleek deep dark palette: `#0a0a0f` (bg), `#12121a` (cards), `#1a1a2e` (surfaces).
 - **Glow Accents:** Electric purple `#7c3aed` and cyan glow `#06b6d4` with custom glassmorphic overrides.
@@ -40,7 +40,7 @@ Vaultme is a full-stack, local-first web application designed to store, manage, 
 
 ---
 
-## 🗂 Project Structure
+## Project Structure
 
 ```
 Vaultme/
@@ -66,7 +66,7 @@ Vaultme/
 
 ---
 
-## 🚀 Installation & Setup
+##  Installation & Setup
 
 ### Prerequisites
 - **Node.js** (v18+ recommended)
@@ -104,7 +104,7 @@ Vaultme/
 
 ---
 
-## ⌨️ Keyboard Shortcuts
+##  Keyboard Shortcuts
 
 - `Ctrl + L` / `Cmd + L`: Instantly lock the vault, wiping keys from memory.
 - `Ctrl + K` / `Cmd + K`: Focus the global vault search input from anywhere.
