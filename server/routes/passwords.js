@@ -8,18 +8,32 @@ const router = express.Router();
  * GET /api/passwords
  * Fetch all encrypted credentials for the authenticated user
  */
-router.get('/', authMiddleware, (req, res) => {
+router.get('/', authMiddleware, async (req, res) => {
   const userId = req.user.id;
 
   try {
-    const credentials = db.prepare(`
+    const result = await db.query(`
       SELECT id, site_name, url, username, password, category, notes, last_changed_at, created_at, updated_at
       FROM credentials
-      WHERE user_id = ?
+      WHERE user_id = $1
       ORDER BY site_name ASC
-    `).all(userId);
+    `, [userId]);
 
-    return res.json(credentials);
+    // Map database columns to client field names
+    const mapped = result.rows.map(row => ({
+      id: row.id,
+      site_name: row.site_name,
+      url: row.url,
+      username: row.username,
+      password: row.password,
+      category: row.category,
+      notes: row.notes,
+      last_changed_at: row.last_changed_at,
+      created_at: row.created_at,
+      updated_at: row.updated_at
+    }));
+
+    return res.json(mapped);
   } catch (error) {
     console.error('Fetch credentials error:', error);
     return res.status(500).json({ error: 'Internal server error.' });
@@ -30,7 +44,7 @@ router.get('/', authMiddleware, (req, res) => {
  * POST /api/passwords
  * Create a new encrypted credential
  */
-router.post('/', authMiddleware, (req, res) => {
+router.post('/', authMiddleware, async (req, res) => {
   const userId = req.user.id;
   const { siteName, url, username, password, category, notes, lastChangedAt } = req.body;
 
@@ -41,13 +55,14 @@ router.post('/', authMiddleware, (req, res) => {
   const changeTime = lastChangedAt || new Date().toISOString();
 
   try {
-    const result = db.prepare(`
+    const result = await db.query(`
       INSERT INTO credentials (user_id, site_name, url, username, password, category, notes, last_changed_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
-    `).run(userId, siteName, url || '', username, password, category || '', notes || '', changeTime);
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, CURRENT_TIMESTAMP)
+      RETURNING id
+    `, [userId, siteName, url || '', username, password, category || '', notes || '', changeTime]);
 
     return res.status(201).json({
-      id: result.lastInsertRowid,
+      id: result.rows[0].id,
       message: 'Credential created successfully.'
     });
   } catch (error) {
@@ -60,7 +75,7 @@ router.post('/', authMiddleware, (req, res) => {
  * PUT /api/passwords/:id
  * Update an existing encrypted credential
  */
-router.put('/:id', authMiddleware, (req, res) => {
+router.put('/:id', authMiddleware, async (req, res) => {
   const userId = req.user.id;
   const { id } = req.params;
   const { siteName, url, username, password, category, notes, lastChangedAt } = req.body;
@@ -73,16 +88,16 @@ router.put('/:id', authMiddleware, (req, res) => {
 
   try {
     // Check ownership first
-    const credential = db.prepare('SELECT id FROM credentials WHERE id = ? AND user_id = ?').get(id, userId);
-    if (!credential) {
+    const credRes = await db.query('SELECT id FROM credentials WHERE id = $1 AND user_id = $2', [id, userId]);
+    if (credRes.rows.length === 0) {
       return res.status(404).json({ error: 'Credential not found or unauthorized.' });
     }
 
-    db.prepare(`
+    await db.query(`
       UPDATE credentials
-      SET site_name = ?, url = ?, username = ?, password = ?, category = ?, notes = ?, last_changed_at = ?, updated_at = CURRENT_TIMESTAMP
-      WHERE id = ? AND user_id = ?
-    `).run(siteName, url || '', username, password, category || '', notes || '', changeTime, id, userId);
+      SET site_name = $1, url = $2, username = $3, password = $4, category = $5, notes = $6, last_changed_at = $7, updated_at = CURRENT_TIMESTAMP
+      WHERE id = $8 AND user_id = $9
+    `, [siteName, url || '', username, password, category || '', notes || '', changeTime, id, userId]);
 
     return res.json({ message: 'Credential updated successfully.' });
   } catch (error) {
@@ -95,14 +110,14 @@ router.put('/:id', authMiddleware, (req, res) => {
  * DELETE /api/passwords/:id
  * Delete an encrypted credential
  */
-router.delete('/:id', authMiddleware, (req, res) => {
+router.delete('/:id', authMiddleware, async (req, res) => {
   const userId = req.user.id;
   const { id } = req.params;
 
   try {
-    const result = db.prepare('DELETE FROM credentials WHERE id = ? AND user_id = ?').run(id, userId);
+    const result = await db.query('DELETE FROM credentials WHERE id = $1 AND user_id = $2', [id, userId]);
     
-    if (result.changes === 0) {
+    if (result.rowCount === 0) {
       return res.status(404).json({ error: 'Credential not found or unauthorized.' });
     }
 
@@ -118,7 +133,7 @@ router.delete('/:id', authMiddleware, (req, res) => {
  * Bulk sync credentials (deletes all user's credentials and inserts new list in a transaction)
  * Useful for CSV imports and Master Password updates.
  */
-router.post('/sync', authMiddleware, (req, res) => {
+router.post('/sync', authMiddleware, async (req, res) => {
   const userId = req.user.id;
   const { credentials } = req.body; // Array of credentials
 
@@ -126,18 +141,22 @@ router.post('/sync', authMiddleware, (req, res) => {
     return res.status(400).json({ error: 'Credentials parameter must be an array.' });
   }
 
-  // Create an SQLite transaction
-  const syncTransaction = db.transaction((items) => {
+  // Get a client from the pg pool to handle the transaction securely
+  const client = await db.pool.connect();
+
+  try {
+    await client.query('BEGIN');
+
     // 1. Delete all existing credentials
-    db.prepare('DELETE FROM credentials WHERE user_id = ?').run(userId);
+    await client.query('DELETE FROM credentials WHERE user_id = $1', [userId]);
 
     // 2. Insert all new items
-    const insertStmt = db.prepare(`
+    const insertText = `
       INSERT INTO credentials (user_id, site_name, url, username, password, category, notes, last_changed_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `);
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    `;
 
-    for (const item of items) {
+    for (const item of credentials) {
       const siteName = item.site_name || item.siteName;
       const url = item.url;
       const username = item.username;
@@ -147,24 +166,34 @@ router.post('/sync', authMiddleware, (req, res) => {
       const lastChangedAt = item.last_changed_at || item.lastChangedAt || new Date().toISOString();
 
       if (!siteName || !username || !password) {
-        throw new Error('Invalid item. site_name, username, and password are required.');
+        throw new Error('Invalid item. siteName, username, and password are required.');
       }
 
-      insertStmt.run(userId, siteName, url || '', username, password, category || '', notes || '', lastChangedAt);
+      await client.query(insertText, [
+        userId, 
+        siteName, 
+        url || '', 
+        username, 
+        password, 
+        category || 'Other', 
+        notes || '', 
+        lastChangedAt
+      ]);
     }
 
-    return items.length;
-  });
-
-  try {
-    const count = syncTransaction(credentials);
+    await client.query('COMMIT');
+    
     return res.json({ 
-      message: `Successfully synchronized ${count} credentials.`,
-      count
+      message: `Successfully synchronized ${credentials.length} credentials.`,
+      count: credentials.length
     });
   } catch (error) {
+    await client.query('ROLLBACK');
     console.error('Bulk sync credentials error:', error);
     return res.status(500).json({ error: error.message || 'Internal server error.' });
+  } finally {
+    // Release client back to the pool
+    client.release();
   }
 });
 
