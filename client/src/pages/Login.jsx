@@ -84,7 +84,7 @@ export default function Login() {
             <Shield className="h-8 w-8" />
           </div>
           <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">
-            Smart<span className="text-accent-purple font-black">Vault</span>
+            Vault<span className="text-accent-purple font-black">me</span>
           </h1>
           <p className="text-sm text-text-secondary mt-1.5 font-medium tracking-wide">
             Your vault. Your rules.

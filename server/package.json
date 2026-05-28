@@ -1,7 +1,7 @@
 {
-  "name": "password-manager-server",
+  "name": "vaultme-server",
   "version": "1.0.0",
-  "description": "Secure SQLite backend for Smart Password Manager",
+  "description": "Secure SQLite backend for Vaultme",
   "main": "server.js",
   "type": "module",
   "scripts": {

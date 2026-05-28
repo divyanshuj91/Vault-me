@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_session_key_for_smart_password_manager';
+const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_session_key_for_vaultme';
 
 export function authMiddleware(req, res, next) {
   const authHeader = req.headers['authorization'];

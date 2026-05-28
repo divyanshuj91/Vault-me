@@ -52,7 +52,7 @@ app.use((err, req, res, next) => {
 // Start Express server
 app.listen(PORT, () => {
   console.log(`===============================================`);
-  console.log(`  Smart Password Manager Backend Running       `);
+  console.log(`  Vaultme Backend Running                      `);
   console.log(`  Port: ${PORT}                                `);
   console.log(`  Mode: ${process.env.NODE_ENV || 'development'}`);
   console.log(`===============================================`);

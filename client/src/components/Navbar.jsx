@@ -48,7 +48,7 @@ export default function Navbar() {
             <Shield className="h-5 w-5" />
           </div>
           <span className="hidden sm:inline font-bold text-lg tracking-wide bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">
-            Smart<span className="text-accent-purple font-extrabold group-hover:text-accent-cyan transition-colors duration-300">Vault</span>
+            Vault<span className="text-accent-purple font-extrabold group-hover:text-accent-cyan transition-colors duration-300">me</span>
           </span>
         </Link>
 

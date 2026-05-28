@@ -15,7 +15,7 @@ export async function getPwnedRange(prefix) {
   try {
     const response = await fetch(url, {
       headers: {
-        'User-Agent': 'Smart-Password-Manager-App'
+        'User-Agent': 'Vaultme-App'
       }
     });
 

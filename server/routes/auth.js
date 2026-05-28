@@ -6,7 +6,7 @@ import db from '../models/database.js';
 import { authMiddleware } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_session_key_for_smart_password_manager';
+const JWT_SECRET = process.env.JWT_SECRET || 'super_secret_session_key_for_vaultme';
 
 // Helper to generate a deterministic salt for non-existing users to prevent user enumeration
 function getMockSalt(email) {

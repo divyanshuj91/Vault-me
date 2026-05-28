@@ -299,7 +299,7 @@ export default function Settings() {
               <Palette className="h-4 w-4 text-accent-cyan" /> Accent Color Theme
             </h3>
             <p className="text-xs text-text-secondary">
-              Customize the accent gradient color scheme of the SmartVault portal.
+              Customize the accent gradient color scheme of the Vaultme portal.
             </p>
             
             <div className="flex items-center gap-3">

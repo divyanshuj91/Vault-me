@@ -1,6 +1,6 @@
-# SmartVault: Secure Zero-Knowledge Password Manager
+# Vaultme: Secure Zero-Knowledge Password Manager
 
-SmartVault is a full-stack, local-first web application designed to store, manage, and audit your credentials securely. Built on a **Zero-Knowledge Security Model**, all cryptographic operations occur strictly client-side. The server and database only store fully encrypted blobs, ensuring your master password and credentials never leave your browser in plain text.
+Vaultme is a full-stack, local-first web application designed to store, manage, and audit your credentials securely. Built on a **Zero-Knowledge Security Model**, all cryptographic operations occur strictly client-side. The server and database only store fully encrypted blobs, ensuring your master password and credentials never leave your browser in plain text.
 
 ---
 
@@ -43,7 +43,7 @@ SmartVault is a full-stack, local-first web application designed to store, manag
 ## 🗂 Project Structure
 
 ```
-Smart Password Manager/
+Vaultme/
 ├── client/                      # React Frontend (Vite)
 │   ├── src/
 │   │   ├── components/          # Navbar, PasswordCard, PasswordModal, StrengthMeter, Toast
