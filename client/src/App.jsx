@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate, Link, Outlet } from 'react-router-dom';
 import { useAuth } from './context/AuthContext.jsx';
 import { useVault } from './context/VaultContext.jsx';
 import { useAutoLock } from './hooks/useAutoLock.js';
@@ -104,13 +104,7 @@ function ProtectedRoute() {
 
       {/* Main content routing panel */}
       <main className="flex-1 w-full pb-16">
-        <Routes>
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="vault" element={<Vault />} />
-          <Route path="generator" element={<Generator />} />
-          <Route path="audit" element={<Audit />} />
-          <Route path="settings" element={<Settings />} />
-        </Routes>
+        <Outlet />
       </main>
     </div>
   );
