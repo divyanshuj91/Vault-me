@@ -1,2 +1,110 @@
-#  Password Manager
-*This was my skillx project for college and this is my full stack project on github*
+# SmartVault: Secure Zero-Knowledge Password Manager
+
+SmartVault is a full-stack, local-first web application designed to store, manage, and audit your credentials securely. Built on a **Zero-Knowledge Security Model**, all cryptographic operations occur strictly client-side. The server and database only store fully encrypted blobs, ensuring your master password and credentials never leave your browser in plain text.
+
+---
+
+## 🔐 Cryptographic & Security Architecture
+
+1. **Key Derivation (PBKDF2):**
+   - When registering or logging in, the client retrieves a random, unique salt from the backend.
+   - Using `crypto-js`, the client runs **PBKDF2 (HMAC-SHA256, 10,000 iterations)** on the master password and salt to derive:
+     - An **Encryption Key (256-bit):** Kept strictly in-memory (React context state) and used for AES-256 vault encryption.
+     - An **Auth Hash:** Sent to the server as a master password validator.
+2. **Authentication (Bcrypt):**
+   - The server receives the client's `Auth Hash` and hashes it using **bcrypt** before storing it in the SQLite database.
+   - Session states are maintained via secure **JWT (JSON Web Tokens)**.
+3. **Zero-Knowledge Vault Storage (AES-256):**
+   - Every credential field (site name, username, URL, password, category, notes) is encrypted client-side using **AES-256 (Cipher Block Chaining)** before sending it to the server.
+   - Searching, filtering, duplicate audits, and strength scores are computed entirely in the browser memory after vault decryption.
+4. **Auto-Lock Security:**
+   - The React context monitors user activity (mouse moves, clicks, keystrokes).
+   - If inactivity exceeds the user-configured timer (1, 5, or 15 minutes), the in-memory `Encryption Key` is wiped, locking the vault.
+5. **Clipboard Auto-Clear:**
+   - Copied passwords are automatically overwritten and cleared from the system clipboard 30 seconds after copying to prevent visual/malware leakage.
+6. **HaveIBeenPwned API Integration (K-Anonymity):**
+   - To check if a password is leaked, the client hashes it locally using SHA-1.
+   - The client sends only the **first 5 characters** of the SHA-1 hash to the backend range proxy.
+   - The backend proxies the list of suffix matches from HaveIBeenPwned, and the client matches the suffix locally. This prevents your IP or full hash from ever being exposed online.
+
+---
+
+## 🎨 Design System & Aesthetics
+
+- **Dark-Only Theme:** Sleek deep dark palette: `#0a0a0f` (bg), `#12121a` (cards), `#1a1a2e` (surfaces).
+- **Glow Accents:** Electric purple `#7c3aed` and cyan glow `#06b6d4` with custom glassmorphic overrides.
+- **Glassmorphism:** Elegant cards styled using `backdrop-blur-md` and semi-transparent outlines.
+- **Smooth Animations:** Framer Motion transitions for modal sliding, page flips, and micro-interactions.
+- **Typography:** Configured to load clean Google Font **Inter**.
+- **Interactive Score:** SVG progress ring visually grading vault health.
+
+---
+
+## 🗂 Project Structure
+
+```
+Smart Password Manager/
+├── client/                      # React Frontend (Vite)
+│   ├── src/
+│   │   ├── components/          # Navbar, PasswordCard, PasswordModal, StrengthMeter, Toast
+│   │   ├── context/             # AuthContext (sessions, keys), VaultContext (decryption, audit)
+│   │   ├── hooks/               # useAutoLock, useClipboard, useBreachCheck
+│   │   ├── pages/               # Login, Dashboard, Vault, Generator, Audit, Settings
+│   │   ├── utils/               # api.js, encryption.js, passwordStrength.js
+│   │   ├── App.jsx              # Routing & Keyboard shortcuts
+│   │   └── index.css            # Tailwind & Glassmorphic stylesheet
+│   └── index.html               # Font load & SEO setup
+│
+├── server/                      # Express Backend
+│   ├── middleware/              # JWT authMiddleware
+│   ├── models/                  # SQLite db.js schema loader
+│   ├── routes/                  # auth.js, passwords.js, audit.js routers
+│   ├── utils/                   # hibp.js Range query client
+│   ├── .env                     # Server configurations
+│   └── server.js                # Express entry point
+```
+
+---
+
+## 🚀 Installation & Setup
+
+### Prerequisites
+- **Node.js** (v18+ recommended)
+- **NPM** (v9+ recommended)
+
+### 1. Backend Setup
+1. Open a terminal and navigate to `/server`:
+   ```bash
+   cd server
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
+   *The server starts on `http://localhost:5000` and creates the SQLite database file `vault.db`.*
+
+### 2. Frontend Setup
+1. Open a new terminal and navigate to `/client`:
+   ```bash
+   cd client
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Run the Vite development server:
+   ```bash
+   npm run dev
+   ```
+   *Open `http://localhost:5173` in your browser.*
+
+---
+
+## ⌨️ Keyboard Shortcuts
+
+- `Ctrl + L` / `Cmd + L`: Instantly lock the vault, wiping keys from memory.
+- `Ctrl + K` / `Cmd + K`: Focus the global vault search input from anywhere.
