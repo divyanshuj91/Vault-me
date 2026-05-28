@@ -8,13 +8,15 @@ import auditRoutes from './routes/audit.js';
 
 dotenv.config();
 
-// Initialize the SQLite database
-try {
-  initDatabase();
-} catch (error) {
-  console.error('Failed to initialize database:', error);
-  process.exit(1);
-}
+// Initialize the database (PostgreSQL if DATABASE_URL is set, otherwise SQLite fallback)
+(async () => {
+  try {
+    await initDatabase();
+  } catch (error) {
+    console.error('Failed to initialize database:', error);
+    process.exit(1);
+  }
+})();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
