@@ -42,7 +42,7 @@ export default function Landing() {
           {/* Action Buttons */}
           <div className="flex items-center gap-4">
             <a 
-              href="https://github.com" 
+              href="https://github.com/divyanshuj91/Vault-me" 
               target="_blank" 
               rel="noreferrer" 
               className="p-2 text-[#8e9192] hover:text-white transition-colors"
